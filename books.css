@@ -1,0 +1,301 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* Style pour la barre de recherche */
+#searchBar {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Style pour le bouton "Ajouter un livre" */
+#showAddFormButton {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+#showAddFormButton:hover {
+    background-color: #218838;
+}
+
+/* Style pour le formulaire d'ajout */
+#addBookForm {
+    display: none;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+#addBookForm h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+#addBookForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+#addBookForm input[type="text"],
+#addBookForm input[type="number"],
+#addBookForm input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#addBookForm input[type="file"] {
+    padding: 5px;
+}
+
+#addBookForm .form-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+#addBookForm button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+#addBookForm button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+#addBookForm #cancelAddFormButton {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+#addBookForm #cancelAddFormButton:hover {
+    background-color: #c82333;
+}
+
+/* Style pour la liste des livres */
+#bookList {
+    margin-top: 20px;
+}
+
+#bookList table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#bookList th, #bookList td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#bookList th {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+#bookList tr:hover {
+    background-color: #f1f1f1;
+}
+
+#bookList img {
+    width: 50px;
+    height: auto;
+    border-radius: 5px;
+}
+
+#bookList button {
+    background-color: #11d8ea;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#bookList button:hover {
+    background-color: #e0a800;
+}
+
+#bookList .del {
+    background-color: #dc3545;
+}
+
+#bookList .del:hover {
+    background-color: #c82333;
+}
+
+/* Style pour le formulaire de modification */
+#editBookForm {
+    display: none;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+#editBookForm h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+#editBookForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+#editBookForm input[type="text"],
+#editBookForm input[type="number"],
+#editBookForm input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#editBookForm input[type="file"] {
+    padding: 5px;
+}
+
+#editBookForm .form-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+#editBookForm button[type="submit"] {
+    background-color: #119f42;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+#editBookForm button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+#editBookForm #cancelEditFormButton {
+    background-color: #12bfd5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+#editBookForm #cancelEditFormButton:hover {
+    background-color: #c82333;
+}
+
+/* Style pour les détails du livre */
+#bookDetail {
+    display: none;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+#bookDetail h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+#bookDetail img {
+    max-width: 35%;
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+#bookDetail p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+#bookDetail button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#bookDetail button:hover {
+    background-color: #c82333;
+}
+
+/* Masquer les éléments non pertinents */
+.hidden {
+    display: none;
+}
+
+/* Style pour l'aperçu de l'image */
+.image-preview {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.image-preview img {
+    max-width: 25%;
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
