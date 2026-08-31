@@ -11,8 +11,8 @@
 	<groupId>com.durel</groupId>
 	<artifactId>bibliotheque-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>bibliotheque-api</name>
+	<description>REST API for the BIBLIOTHEQUE application</description>
 	<url/>
 	<licenses>
 		<license/>
