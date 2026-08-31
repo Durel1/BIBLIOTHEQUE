@@ -41,12 +41,6 @@ CREATE TABLE `books` (
 -- Déchargement des données de la table `books`
 --
 
-INSERT INTO `books` (`id`, `title`, `author`, `published_year`, `genre`, `image`, `created_at`) VALUES
-(28, 'main', 'durel', 2000, 'education', 'uploads/be75ae75bd9e2fdfe16f11e6267fb85b.png', '2025-03-05 12:44:20'),
-(29, 'ok', 'jean', 2, 'education', 'uploads/2.jpg', '2025-03-05 12:46:45'),
-(38, 'L\' art de la guerre', 'SUN TSU', 768, 'Strategy', 'uploads/IMG_20241125_122005_280@-289400246.jpg', '2025-03-05 16:43:21');
-
--- --------------------------------------------------------
 
 --
 -- Structure de la table `users`
@@ -63,20 +57,6 @@ CREATE TABLE `users` (
 -- Déchargement des données de la table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `email`) VALUES
-(3, 'Wany', '$2y$10$DeKp7d.UbuEtrYju5owUZ.w7i6XiiPGnN1wn96XhMSJ5lX..eCR.a', 'waniprincesse04@gmail.com'),
-(6, 'BAMI', '$2y$10$Lqd0CbMqEtS7.1oUVnprou31YRPx0SACalSzI/ZKbuBHp3/0.RYEq', 'cooolup@gmail.com'),
-(9, 'Andy', '$2y$10$sOQnDtXy5PohwVAN.s3yEeL4ly6itWNwrjrcOxMpjCbvQfniW0lre', 'andybig@gmail.com'),
-(10, 'Romeo', '$2y$10$x54YVDTTN8xZspK1L6HDfuu8dakhDildoytu65ByDJbhbLO7TLxDG', 'romeoup@gmail.com'),
-(12, 'sany', '$2y$10$rVNgkFhFRY9tXmDBKYkrR.1JG1e/lLq7tUKqjnI1Lg50NVgvyKG/6', 'sanyup@gmail.com'),
-(47, 'durel', '$2y$10$/yR3sM193awPsqTjYA3OnOK8GKWFgMGNn/kuHR2ienGahEU3z3VsS', 'durel123@gmail.com'),
-(48, 'The Prince IBRAHIM', '$2y$10$34TzVRTFFPi8VDVW87S/nOQf.dAUyosvjJYRrccG3NCV3gLDQBtmq', 'me@theprinceibrahim.com'),
-(51, 'durel5', '$2y$10$urBcwEFGvrToe3aoNGq24OfjZ01wcLAyWL/XErwcVaShMO4Fv.6zm', 'd@gmail.com'),
-(52, 'durel4', '$2y$10$qaNYi5dmxvNC50ShlJNb0u3QmrySURMpDHL.dxlc8MX98TGUWg/JO', 'd4@gmail.com');
-
---
--- Index pour les tables déchargées
---
 
 --
 -- Index pour la table `books`
