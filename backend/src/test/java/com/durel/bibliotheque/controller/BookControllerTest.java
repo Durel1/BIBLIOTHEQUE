@@ -3,6 +3,7 @@ package com.durel.bibliotheque.controller;
 import com.durel.bibliotheque.dto.BookResponse;
 import com.durel.bibliotheque.dto.CreateBookRequest;
 import com.durel.bibliotheque.service.BookService;
+import com.durel.bibliotheque.dto.UpdateBookRequest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import static org.mockito.BDDMockito.given;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -136,5 +139,88 @@ class BookControllerTest {
                 now,
                 now
         );
+    }
+
+    @Test
+    void shouldUpdateBook() throws Exception {
+
+        BookResponse updatedBook = new BookResponse(
+                1L,
+                "Clean Code Updated",
+                "Robert C. Martin",
+                2008,
+                "Software Engineering",
+                "Updated description",
+                null,
+                Instant.parse("2026-09-01T00:00:00Z"),
+                Instant.parse("2026-09-01T01:00:00Z")
+        );
+
+        given(bookService.update(
+                org.mockito.ArgumentMatchers.eq(1L),
+                any(UpdateBookRequest.class)))
+                .willReturn(Optional.of(updatedBook));
+
+        String requestBody = """
+                {
+                "title": "Clean Code Updated",
+                "author": "Robert C. Martin",
+                "publishedYear": 2008,
+                "genre": "Software Engineering",
+                "description": "Updated description",
+                "coverUrl": null
+                }
+                """;
+
+        mockMvc.perform(put("/api/books/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title")
+                        .value("Clean Code Updated"));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingMissingBook()
+            throws Exception {
+
+        given(bookService.update(
+                org.mockito.ArgumentMatchers.eq(999L),
+                any(UpdateBookRequest.class)))
+                .willReturn(Optional.empty());
+
+        String requestBody = """
+                {
+                "title": "Unknown Book",
+                "author": "Unknown Author"
+                }
+                """;
+
+        mockMvc.perform(put("/api/books/999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldDeleteBook() throws Exception {
+
+        given(bookService.delete(1L))
+                .willReturn(true);
+
+        mockMvc.perform(delete("/api/books/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingMissingBook()
+            throws Exception {
+
+        given(bookService.delete(999L))
+                .willReturn(false);
+
+        mockMvc.perform(delete("/api/books/999"))
+                .andExpect(status().isNotFound());
     }
 }

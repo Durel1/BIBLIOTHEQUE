@@ -3,6 +3,7 @@ package com.durel.bibliotheque.service;
 import com.durel.bibliotheque.dto.BookResponse;
 import com.durel.bibliotheque.dto.CreateBookRequest;
 import org.junit.jupiter.api.Test;
+import com.durel.bibliotheque.dto.UpdateBookRequest;
 
 import java.util.Optional;
 
@@ -92,5 +93,97 @@ class BookServiceTest {
                 service.findById(999L);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldUpdateExistingBook() {
+
+        BookService service = new BookService();
+
+        BookResponse createdBook = service.create(
+                new CreateBookRequest(
+                        "Clean Code",
+                        "Robert C. Martin",
+                        2008,
+                        null,
+                        null,
+                        null
+                )
+        );
+
+        UpdateBookRequest updateRequest = new UpdateBookRequest(
+                "Clean Code Updated",
+                "Robert C. Martin",
+                2008,
+                "Software Engineering",
+                "Updated description",
+                null
+        );
+
+        Optional<BookResponse> result =
+                service.update(createdBook.id(), updateRequest);
+
+        assertTrue(result.isPresent());
+
+        BookResponse updatedBook = result.get();
+
+        assertEquals(createdBook.id(), updatedBook.id());
+        assertEquals("Clean Code Updated", updatedBook.title());
+        assertEquals(createdBook.createdAt(), updatedBook.createdAt());
+        assertFalse(
+                updatedBook.updatedAt().isBefore(createdBook.updatedAt())
+        );
+    }
+
+    @Test
+    void shouldReturnEmptyWhenUpdatingMissingBook() {
+
+        BookService service = new BookService();
+
+        UpdateBookRequest request = new UpdateBookRequest(
+                "Unknown Book",
+                "Unknown Author",
+                null,
+                null,
+                null,
+                null
+        );
+
+        Optional<BookResponse> result =
+                service.update(999L, request);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldDeleteExistingBook() {
+
+        BookService service = new BookService();
+
+        BookResponse createdBook = service.create(
+                new CreateBookRequest(
+                        "Clean Code",
+                        "Robert C. Martin",
+                        2008,
+                        null,
+                        null,
+                        null
+                )
+        );
+
+        boolean deleted = service.delete(createdBook.id());
+
+        assertTrue(deleted);
+        assertTrue(service.findById(createdBook.id()).isEmpty());
+    }
+
+    @Test
+    void shouldReturnFalseWhenDeletingMissingBook() {
+
+        BookService service = new BookService();
+
+        boolean deleted = service.delete(999L);
+
+        assertFalse(deleted);
     }
 }
