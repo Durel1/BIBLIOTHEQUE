@@ -28,6 +28,6 @@ public record CreateBookRequest(
         String description,
 
         String coverUrl
-
-) {
+    ) 
+    {
 }

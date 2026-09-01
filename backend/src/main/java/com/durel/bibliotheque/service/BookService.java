@@ -29,7 +29,7 @@ public class BookService {
 
     /**
      * Returns all books currently stored in memory.
-     */
+    */
     public List<BookResponse> findAll() {
         return new ArrayList<>(books.values());
     }
@@ -39,14 +39,14 @@ public class BookService {
      *
      * Optional is used because a book with the requested ID
      * may not exist.
-     */
+    */
     public Optional<BookResponse> findById(Long id) {
         return Optional.ofNullable(books.get(id));
     }
 
     /**
      * Creates a new book from the data received by the API.
-     */
+    */
     public BookResponse create(CreateBookRequest request) {
 
         Instant now = Instant.now();
@@ -71,7 +71,7 @@ public class BookService {
     /**
      * Converts an optional blank string into null and trims
      * meaningful values.
-     */
+    */
     private String normalizeOptionalText(String value) {
 
         if (value == null || value.isBlank()) {
@@ -81,12 +81,12 @@ public class BookService {
         return value.trim();
     }
 
-        /**
+    /**
      * Updates an existing book.
      *
      * The creation timestamp is preserved while updatedAt
      * reflects the latest modification.
-     */
+    */
     public Optional<BookResponse> update(
             Long id,
             UpdateBookRequest request) {
@@ -114,11 +114,11 @@ public class BookService {
         return Optional.of(updatedBook);
     }
 
-        /**
+    /**
      * Deletes a book when it exists.
      *
      * @return true when a book was deleted, false otherwise
-     */
+    */
     public boolean delete(Long id) {
         return books.remove(id) != null;
     }

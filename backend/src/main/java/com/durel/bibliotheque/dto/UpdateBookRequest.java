@@ -3,7 +3,6 @@ package com.durel.bibliotheque.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import com.durel.bibliotheque.dto.UpdateBookRequest;
 
 /**
  * Data received from the client when updating an existing book.
