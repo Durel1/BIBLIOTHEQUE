@@ -2,6 +2,8 @@ package com.durel.bibliotheque.service;
 
 import com.durel.bibliotheque.dto.BookResponse;
 import com.durel.bibliotheque.dto.CreateBookRequest;
+import com.durel.bibliotheque.dto.UpdateBookRequest;
+
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -77,5 +79,47 @@ public class BookService {
         }
 
         return value.trim();
+    }
+
+        /**
+     * Updates an existing book.
+     *
+     * The creation timestamp is preserved while updatedAt
+     * reflects the latest modification.
+     */
+    public Optional<BookResponse> update(
+            Long id,
+            UpdateBookRequest request) {
+
+        BookResponse existingBook = books.get(id);
+
+        if (existingBook == null) {
+            return Optional.empty();
+        }
+
+        BookResponse updatedBook = new BookResponse(
+                existingBook.id(),
+                request.title().trim(),
+                request.author().trim(),
+                request.publishedYear(),
+                normalizeOptionalText(request.genre()),
+                normalizeOptionalText(request.description()),
+                normalizeOptionalText(request.coverUrl()),
+                existingBook.createdAt(),
+                Instant.now()
+        );
+
+        books.put(id, updatedBook);
+
+        return Optional.of(updatedBook);
+    }
+
+        /**
+     * Deletes a book when it exists.
+     *
+     * @return true when a book was deleted, false otherwise
+     */
+    public boolean delete(Long id) {
+        return books.remove(id) != null;
     }
 }

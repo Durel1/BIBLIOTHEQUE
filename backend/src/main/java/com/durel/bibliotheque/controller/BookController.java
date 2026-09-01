@@ -6,6 +6,7 @@ import com.durel.bibliotheque.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.durel.bibliotheque.dto.UpdateBookRequest;
 
 import java.net.URI;
 import java.util.List;
@@ -64,5 +65,31 @@ public class BookController {
         return ResponseEntity
                 .created(location)
                 .body(createdBook);
+    }
+
+    /**
+     * Updates an existing book.
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<BookResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateBookRequest request) {
+
+        return bookService.update(id, request)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Deletes an existing book.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+
+        if (!bookService.delete(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
     }
 }
