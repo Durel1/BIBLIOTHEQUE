@@ -8,6 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.time.Instant;
 
@@ -131,6 +134,25 @@ public class Book {
 
     public void setCoverUrl(String coverUrl) {
         this.coverUrl = coverUrl;
+    }
+
+    /**
+     * Owner of this book.
+     *
+     * The association is temporarily optional while existing books
+     * are migrated. It will become mandatory once authentication
+     * assigns every book to a user.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+    return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Instant getCreatedAt() {
