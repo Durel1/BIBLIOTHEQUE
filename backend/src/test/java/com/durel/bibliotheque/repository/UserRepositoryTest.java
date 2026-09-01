@@ -17,6 +17,7 @@ class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+    
 
     @Test
     void shouldFindUserByEmail() {
@@ -74,4 +75,5 @@ class UserRepositoryTest {
                 userRepository.existsByUsername("unknown")
         );
     }
+
 }
