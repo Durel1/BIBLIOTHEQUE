@@ -4,6 +4,7 @@ import com.durel.bibliotheque.dto.BookResponse;
 import com.durel.bibliotheque.dto.CreateBookRequest;
 import com.durel.bibliotheque.dto.UpdateBookRequest;
 import com.durel.bibliotheque.entity.User;
+import com.durel.bibliotheque.exception.BookNotFoundException;
 import com.durel.bibliotheque.service.BookService;
 
 import jakarta.validation.Valid;
@@ -57,22 +58,23 @@ public class BookController {
      * Returns a book only when it belongs to the authenticated user.
      *
      * A missing book and a book owned by another user both
-     * result in HTTP 404.
+     * result in the same HTTP 404 response.
      */
     @GetMapping("/{id}")
     public ResponseEntity<BookResponse> findById(
             @PathVariable Long id,
             @AuthenticationPrincipal User user) {
 
-        return bookService
+        BookResponse book = bookService
                 .findByIdForUser(
                         id,
                         user.getId()
                 )
-                .map(ResponseEntity::ok)
-                .orElseGet(() ->
-                        ResponseEntity.notFound().build()
+                .orElseThrow(() ->
+                        new BookNotFoundException(id)
                 );
+
+        return ResponseEntity.ok(book);
     }
 
     /**
@@ -101,11 +103,11 @@ public class BookController {
                 .body(createdBook);
     }
 
-   /**
+    /**
      * Updates a book only when it belongs to the authenticated user.
      *
      * A missing book and a book owned by another user both
-     * result in HTTP 404.
+     * result in the same HTTP 404 response.
      */
     @PutMapping("/{id}")
     public ResponseEntity<BookResponse> update(
@@ -113,34 +115,37 @@ public class BookController {
             @Valid @RequestBody UpdateBookRequest request,
             @AuthenticationPrincipal User user) {
 
-        return bookService
+        BookResponse updatedBook = bookService
                 .updateForUser(
                         id,
                         user.getId(),
                         request
                 )
-                .map(ResponseEntity::ok)
-                .orElseGet(() ->
-                        ResponseEntity.notFound().build()
+                .orElseThrow(() ->
+                        new BookNotFoundException(id)
                 );
+
+        return ResponseEntity.ok(updatedBook);
     }
 
     /**
      * Deletes a book only when it belongs to the authenticated user.
      *
      * A missing book and a book owned by another user both
-     * result in HTTP 404.
+     * result in the same HTTP 404 response.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id,
             @AuthenticationPrincipal User user) {
 
-        if (!bookService.deleteForUser(
+        boolean deleted = bookService.deleteForUser(
                 id,
                 user.getId()
-        )) {
-            return ResponseEntity.notFound().build();
+        );
+
+        if (!deleted) {
+            throw new BookNotFoundException(id);
         }
 
         return ResponseEntity.noContent().build();

@@ -1,12 +1,10 @@
 package com.durel.bibliotheque.controller;
 
-import com.durel.bibliotheque.dto.RegisterRequest;
-import com.durel.bibliotheque.dto.RegisterResponse;
-import com.durel.bibliotheque.exception.UserAlreadyExistsException;
-import com.durel.bibliotheque.service.UserService;
 import com.durel.bibliotheque.dto.LoginRequest;
 import com.durel.bibliotheque.dto.LoginResponse;
-import com.durel.bibliotheque.exception.InvalidCredentialsException;
+import com.durel.bibliotheque.dto.RegisterRequest;
+import com.durel.bibliotheque.dto.RegisterResponse;
+import com.durel.bibliotheque.service.UserService;
 
 import jakarta.validation.Valid;
 
@@ -19,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Exposes authentication-related HTTP endpoints.
+ *
+ * Authentication errors are handled centrally by
+ * GlobalExceptionHandler.
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -32,47 +33,35 @@ public class AuthController {
 
     /**
      * Registers a new application user.
+     *
+     * UserAlreadyExistsException is handled by
+     * GlobalExceptionHandler and converted to HTTP 409.
      */
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(
             @Valid @RequestBody RegisterRequest request) {
 
-        try {
+        RegisterResponse response =
+                userService.register(request);
 
-            RegisterResponse response =
-                    userService.register(request);
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(response);
-
-        } catch (UserAlreadyExistsException exception) {
-
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .build();
-        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     /**
-    * Authenticates an existing user.
-    */
+     * Authenticates a user and returns a JWT.
+     *
+     * InvalidCredentialsException is handled by
+     * GlobalExceptionHandler and converted to HTTP 401.
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request) {
 
-        try {
+        LoginResponse response =
+                userService.login(request);
 
-            LoginResponse response =
-                    userService.login(request);
-
-            return ResponseEntity.ok(response);
-
-        } catch (InvalidCredentialsException exception) {
-
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .build();
-        }
+        return ResponseEntity.ok(response);
     }
 }
