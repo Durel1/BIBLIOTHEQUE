@@ -4,6 +4,7 @@ import com.durel.bibliotheque.dto.BookResponse;
 import com.durel.bibliotheque.dto.CreateBookRequest;
 import com.durel.bibliotheque.service.BookService;
 import com.durel.bibliotheque.dto.UpdateBookRequest;
+import com.durel.bibliotheque.security.JwtAuthenticationFilter;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 
 import java.time.Instant;
 import java.util.List;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BookController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class BookControllerTest {
 
     @Autowired
@@ -36,6 +39,9 @@ class BookControllerTest {
 
     @MockitoBean
     private BookService bookService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Test
     void shouldReturnAllBooks() throws Exception {

@@ -5,10 +5,12 @@ import com.durel.bibliotheque.exception.UserAlreadyExistsException;
 import com.durel.bibliotheque.service.UserService;
 import com.durel.bibliotheque.dto.LoginResponse;
 import com.durel.bibliotheque.exception.InvalidCredentialsException;
+import com.durel.bibliotheque.security.JwtAuthenticationFilter;
 
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -23,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
     @Autowired
@@ -30,6 +33,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private UserService userService;
+    
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Test
     void shouldRegisterUser() throws Exception {
@@ -116,11 +122,12 @@ class AuthControllerTest {
         void shouldLoginUser() throws Exception {
 
         LoginResponse response =
-                new LoginResponse(
-                        1L,
-                        "durel",
-                        "durel@example.com"
-                );
+        new LoginResponse(
+                1L,
+                "durel",
+                "durel@example.com",
+                "test-jwt-token"
+        );
 
         given(userService.login(any()))
                 .willReturn(response);
@@ -145,6 +152,10 @@ class AuthControllerTest {
                 .andExpect(
                         jsonPath("$.password")
                                 .doesNotExist()
+                )
+                .andExpect(
+                        jsonPath("$.token")
+                                .value("test-jwt-token")
                 );
         }
 

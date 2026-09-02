@@ -1,13 +1,14 @@
 package com.durel.bibliotheque.service;
 
+import com.durel.bibliotheque.dto.LoginRequest;
+import com.durel.bibliotheque.dto.LoginResponse;
 import com.durel.bibliotheque.dto.RegisterRequest;
 import com.durel.bibliotheque.dto.RegisterResponse;
 import com.durel.bibliotheque.entity.User;
-import com.durel.bibliotheque.repository.UserRepository;
-import com.durel.bibliotheque.exception.UserAlreadyExistsException;
-import com.durel.bibliotheque.dto.LoginRequest;
-import com.durel.bibliotheque.dto.LoginResponse;
 import com.durel.bibliotheque.exception.InvalidCredentialsException;
+import com.durel.bibliotheque.exception.UserAlreadyExistsException;
+import com.durel.bibliotheque.repository.UserRepository;
+import com.durel.bibliotheque.security.JwtService;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,13 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -34,6 +35,9 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtService jwtService;
 
     @InjectMocks
     private UserService userService;
@@ -64,7 +68,11 @@ class UserServiceTest {
         RegisterResponse response =
                 userService.register(request);
 
-        assertEquals("durel", response.username());
+        assertEquals(
+                "durel",
+                response.username()
+        );
+
         assertEquals(
                 "durel@example.com",
                 response.email()
@@ -116,8 +124,8 @@ class UserServiceTest {
         );
     }
 
-        @Test
-        void shouldLoginWithValidCredentials() {
+    @Test
+    void shouldLoginWithValidCredentials() {
 
         LoginRequest request = new LoginRequest(
                 "  Durel@Example.com  ",
@@ -140,13 +148,25 @@ class UserServiceTest {
                 )
         ).willReturn(true);
 
+        given(jwtService.generateToken(user))
+                .willReturn("test-jwt-token");
+
         LoginResponse response =
                 userService.login(request);
 
-        assertEquals("durel", response.username());
+        assertEquals(
+                "durel",
+                response.username()
+        );
+
         assertEquals(
                 "durel@example.com",
                 response.email()
+        );
+
+        assertEquals(
+                "test-jwt-token",
+                response.token()
         );
 
         verify(passwordEncoder)
@@ -154,10 +174,13 @@ class UserServiceTest {
                         "Bonjour123!",
                         "encoded-password"
                 );
-        }
 
-        @Test
-        void shouldRejectUnknownEmail() {
+        verify(jwtService)
+                .generateToken(user);
+    }
+
+    @Test
+    void shouldRejectUnknownEmail() {
 
         LoginRequest request = new LoginRequest(
                 "unknown@example.com",
@@ -174,10 +197,10 @@ class UserServiceTest {
                 InvalidCredentialsException.class,
                 () -> userService.login(request)
         );
-        }
+    }
 
-        @Test
-        void shouldRejectInvalidPassword() {
+    @Test
+    void shouldRejectInvalidPassword() {
 
         LoginRequest request = new LoginRequest(
                 "durel@example.com",
@@ -207,5 +230,5 @@ class UserServiceTest {
                 InvalidCredentialsException.class,
                 () -> userService.login(request)
         );
-        }
+    }
 }
