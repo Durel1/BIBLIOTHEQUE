@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Ma Bibliothèque</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+</head>
+
+<body>
+
+<header class="app-header">
+
+    <div class="app-header-inner">
+
+        <a
+            class="app-brand"
+            href="index.html"
+        >
+            <span class="brand-icon">
+                📚
+            </span>
+
+            Biblio
+        </a>
+
+
+        <button
+            id="logout-button"
+            class="ghost-button"
+            type="button"
+        >
+            Se déconnecter
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="library-page">
+
+    <section class="library-hero">
+
+        <div>
+
+            <h1>
+                Ma bibliothèque
+            </h1>
+
+            <p>
+                Ajoutez, organisez et retrouvez facilement
+                tous les livres de votre collection personnelle.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <div class="library-layout">
+
+
+        <!-- BOOK FORM -->
+
+        <section class="panel form-panel">
+
+            <div class="panel-header">
+
+                <h2 id="book-form-title">
+                    Ajouter un livre
+                </h2>
+
+                <p>
+                    Enregistrez un nouvel ouvrage
+                    dans votre collection.
+                </p>
+
+            </div>
+
+
+            <form id="book-form">
+
+
+                <div class="form-group">
+
+                    <label for="title">
+                        Titre
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        required
+                        placeholder="Ex. Le Petit Prince"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="author">
+                        Auteur
+                    </label>
+
+                    <input
+                        type="text"
+                        id="author"
+                        required
+                        placeholder="Ex. Antoine de Saint-Exupéry"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="published-year">
+                        Année de publication
+                    </label>
+
+                    <input
+                        type="number"
+                        id="published-year"
+                        placeholder="1943"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="genre">
+                        Genre
+                    </label>
+
+                    <input
+                        type="text"
+                        id="genre"
+                        placeholder="Roman, science, histoire..."
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        placeholder="Quelques mots sur ce livre..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="cover-url">
+                        URL de couverture
+                    </label>
+
+                    <input
+                        type="url"
+                        id="cover-url"
+                        placeholder="https://..."
+                    >
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        id="book-submit-button"
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Ajouter le livre
+                    </button>
+
+
+                    <button
+                        id="cancel-edit-button"
+                        class="ghost-button"
+                        type="button"
+                        hidden
+                    >
+                        Annuler
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <p
+                id="book-form-error"
+                class="error-message"
+                role="alert"
+            ></p>
+
+            <p
+                id="book-form-message"
+                class="success-message"
+            ></p>
+
+        </section>
+
+
+        <!-- BOOK LIST -->
+
+        <section>
+
+            <div class="library-list-header">
+
+                <h2>
+                    Mes livres
+                </h2>
+
+                <span
+                    id="book-count"
+                    class="book-count"
+                >
+                    0 livre
+                </span>
+
+            </div>
+
+
+            <p
+                id="books-error"
+                class="error-message"
+                role="alert"
+            ></p>
+
+
+            <div
+                id="books-loading"
+                class="loading"
+            >
+                Chargement de votre bibliothèque...
+            </div>
+
+
+            <div
+                id="empty-library"
+                class="empty-state"
+                hidden
+            >
+
+                <div class="empty-icon">
+                    📖
+                </div>
+
+                <h3>
+                    Votre bibliothèque est vide
+                </h3>
+
+                <p>
+                    Ajoutez votre premier livre
+                    avec le formulaire.
+                </p>
+
+            </div>
+
+
+            <div id="books-list">
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<script
+    type="module"
+    src="js/books.js"
+></script>
+
+</body>
+</html>

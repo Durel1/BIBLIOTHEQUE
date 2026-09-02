@@ -1,0 +1,835 @@
+/* =========================================================
+   BIBLIOTHÈQUE — GLOBAL DESIGN SYSTEM
+   ========================================================= */
+
+:root {
+    --background: #f5f3ee;
+    --surface: #ffffff;
+    --surface-soft: #faf9f6;
+
+    --primary: #214e3a;
+    --primary-hover: #173d2d;
+    --primary-soft: #e9f1ed;
+
+    --accent: #c99b59;
+
+    --text: #1d2923;
+    --text-soft: #69756f;
+
+    --border: #dedfd9;
+
+    --danger: #b83a3a;
+    --danger-hover: #982d2d;
+    --danger-soft: #fff0f0;
+
+    --success: #26704d;
+    --success-soft: #edf8f2;
+
+    --shadow:
+        0 12px 35px rgba(34, 51, 43, 0.08);
+
+    --shadow-small:
+        0 4px 16px rgba(34, 51, 43, 0.08);
+
+    --radius-large: 22px;
+    --radius-medium: 14px;
+    --radius-small: 10px;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #edf3ef 0,
+            transparent 35%
+        ),
+        var(--background);
+
+    color: var(--text);
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   AUTH PAGES
+   ========================================================= */
+
+.auth-page {
+    min-height: 100vh;
+
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+}
+
+.auth-visual {
+    padding: 64px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 63, 45, 0.96),
+            rgba(33, 78, 58, 0.88)
+        );
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    font-size: 1.4rem;
+}
+
+.auth-visual-content {
+    max-width: 560px;
+}
+
+.auth-visual h1 {
+    margin: 0 0 22px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 1.02;
+
+    letter-spacing: -0.04em;
+}
+
+.auth-visual p {
+    max-width: 500px;
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 1.08rem;
+    line-height: 1.75;
+}
+
+.auth-quote {
+    color: rgba(255, 255, 255, 0.6);
+
+    font-size: 0.9rem;
+}
+
+.auth-panel {
+    padding: 40px;
+
+    display: grid;
+    place-items: center;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+
+    padding: 42px;
+
+    background: var(--surface);
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-large);
+
+    box-shadow: var(--shadow);
+}
+
+.auth-card h2 {
+    margin: 0 0 8px;
+
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+}
+
+.auth-subtitle {
+    margin: 0 0 30px;
+
+    color: var(--text-soft);
+    line-height: 1.6;
+}
+
+.auth-footer {
+    margin: 26px 0 0;
+
+    text-align: center;
+    color: var(--text-soft);
+}
+
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 0.9rem;
+    font-weight: 650;
+}
+
+input,
+textarea {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    color: var(--text);
+
+    background: var(--surface-soft);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+
+    outline: none;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+input:focus,
+textarea:focus {
+    background: white;
+
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 4px rgba(33, 78, 58, 0.1);
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button {
+    border: 0;
+    border-radius: var(--radius-small);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s,
+        background 0.2s,
+        box-shadow 0.2s;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+.primary-button {
+    width: 100%;
+
+    padding: 13px 18px;
+
+    color: white;
+    background: var(--primary);
+
+    font-weight: 700;
+
+    box-shadow:
+        0 6px 16px rgba(33, 78, 58, 0.16);
+}
+
+.primary-button:hover {
+    background: var(--primary-hover);
+}
+
+.secondary-button {
+    padding: 11px 15px;
+
+    color: var(--primary);
+    background: var(--primary-soft);
+
+    font-weight: 650;
+}
+
+.secondary-button:hover {
+    background: #dce9e2;
+}
+
+.danger-button {
+    padding: 11px 15px;
+
+    color: var(--danger);
+    background: var(--danger-soft);
+
+    font-weight: 650;
+}
+
+.danger-button:hover {
+    color: white;
+    background: var(--danger);
+}
+
+.ghost-button {
+    padding: 10px 15px;
+
+    color: var(--text);
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    font-weight: 600;
+}
+
+.ghost-button:hover {
+    background: var(--surface-soft);
+}
+
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.error-message {
+    min-height: 20px;
+
+    margin: 14px 0 0;
+
+    color: var(--danger);
+
+    font-size: 0.9rem;
+}
+
+.success-message {
+    min-height: 20px;
+
+    margin: 14px 0 0;
+
+    color: var(--success);
+
+    font-size: 0.9rem;
+}
+
+
+/* =========================================================
+   LIBRARY PAGE
+   ========================================================= */
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+
+    border-bottom: 1px solid rgba(222, 223, 217, 0.8);
+
+    background:
+        rgba(245, 243, 238, 0.9);
+
+    backdrop-filter: blur(14px);
+}
+
+.app-header-inner {
+    width: min(1180px, 92%);
+
+    margin: auto;
+
+    min-height: 74px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    color: var(--text);
+
+    font-size: 1.1rem;
+    font-weight: 750;
+}
+
+.app-brand:hover {
+    text-decoration: none;
+}
+
+.app-brand .brand-icon {
+    color: white;
+    background: var(--primary);
+}
+
+.library-page {
+    width: min(1180px, 92%);
+
+    margin: 42px auto 80px;
+}
+
+.library-hero {
+    margin-bottom: 38px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+}
+
+.library-hero h1 {
+    margin: 0;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    letter-spacing: -0.04em;
+}
+
+.library-hero p {
+    max-width: 620px;
+
+    margin: 10px 0 0;
+
+    color: var(--text-soft);
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   DASHBOARD LAYOUT
+   ========================================================= */
+
+.library-layout {
+    display: grid;
+    grid-template-columns: minmax(300px, 360px) 1fr;
+    gap: 30px;
+
+    align-items: start;
+}
+
+.panel {
+    padding: 26px;
+
+    background: var(--surface);
+
+    border: 1px solid rgba(222, 223, 217, 0.9);
+    border-radius: var(--radius-large);
+
+    box-shadow: var(--shadow-small);
+}
+
+.form-panel {
+    position: sticky;
+    top: 102px;
+}
+
+.panel-header {
+    margin-bottom: 24px;
+}
+
+.panel-header h2 {
+    margin: 0;
+
+    font-size: 1.25rem;
+}
+
+.panel-header p {
+    margin: 6px 0 0;
+
+    color: var(--text-soft);
+
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions .primary-button {
+    flex: 1;
+}
+
+
+/* =========================================================
+   BOOK LIST
+   ========================================================= */
+
+.library-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.library-list-header h2 {
+    margin: 0;
+
+    font-size: 1.5rem;
+}
+
+.book-count {
+    padding: 6px 11px;
+
+    background: var(--primary-soft);
+
+    border-radius: 999px;
+
+    color: var(--primary);
+
+    font-size: 0.83rem;
+    font-weight: 700;
+}
+
+#books-list {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fill, minmax(240px, 1fr));
+
+    gap: 20px;
+}
+
+.book-card {
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100%;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 18px;
+
+    box-shadow: var(--shadow-small);
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.book-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 14px 30px rgba(34, 51, 43, 0.12);
+}
+
+.book-cover {
+    height: 210px;
+
+    display: grid;
+    place-items: center;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            #dce9e2,
+            #f0e9dc
+        );
+}
+
+.book-cover img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.book-cover-placeholder {
+    width: 72px;
+    height: 94px;
+
+    display: grid;
+    place-items: center;
+
+    color: white;
+    background: var(--primary);
+
+    border-radius: 7px 12px 12px 7px;
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: 2rem;
+
+    box-shadow:
+        8px 8px 0 rgba(0, 0, 0, 0.08);
+}
+
+.book-content {
+    padding: 20px;
+
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.book-content h3 {
+    margin: 0 0 7px;
+
+    font-size: 1.12rem;
+    line-height: 1.35;
+}
+
+.book-author {
+    margin: 0 0 15px;
+
+    color: var(--text-soft);
+
+    font-size: 0.92rem;
+}
+
+.book-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    margin-bottom: 14px;
+}
+
+.book-tag {
+    padding: 5px 9px;
+
+    color: var(--primary);
+    background: var(--primary-soft);
+
+    border-radius: 999px;
+
+    font-size: 0.77rem;
+    font-weight: 650;
+}
+
+.book-description {
+    margin: 0 0 18px;
+
+    color: var(--text-soft);
+
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.book-actions {
+    display: flex;
+    gap: 8px;
+
+    margin-top: auto;
+}
+
+.book-actions button {
+    flex: 1;
+}
+
+
+/* =========================================================
+   EMPTY / LOADING STATES
+   ========================================================= */
+
+.empty-state {
+    padding: 70px 20px;
+
+    text-align: center;
+
+    color: var(--text-soft);
+
+    background: var(--surface);
+
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-large);
+}
+
+.empty-icon {
+    width: 70px;
+    height: 70px;
+
+    margin: 0 auto 18px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--primary);
+    background: var(--primary-soft);
+
+    border-radius: 50%;
+
+    font-size: 1.8rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 8px;
+
+    color: var(--text);
+}
+
+.empty-state p {
+    margin: 0;
+}
+
+.loading {
+    padding: 30px;
+
+    text-align: center;
+    color: var(--text-soft);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-visual {
+        min-height: 320px;
+        padding: 40px;
+    }
+
+    .auth-quote {
+        display: none;
+    }
+
+    .auth-panel {
+        padding: 30px 20px 50px;
+    }
+
+    .library-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .form-panel {
+        position: static;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .auth-visual {
+        min-height: 250px;
+        padding: 28px;
+    }
+
+    .auth-visual h1 {
+        font-size: 2.4rem;
+    }
+
+    .auth-card {
+        padding: 28px 22px;
+    }
+
+    .library-page {
+        margin-top: 28px;
+    }
+
+    .library-hero {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .app-header-inner {
+        width: 90%;
+    }
+
+    .library-layout {
+        gap: 22px;
+    }
+
+    .panel {
+        padding: 20px;
+    }
+
+    #books-list {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .book-actions {
+        flex-direction: column;
+    }
+}
