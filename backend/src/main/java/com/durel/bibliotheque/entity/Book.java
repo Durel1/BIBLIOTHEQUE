@@ -137,14 +137,13 @@ public class Book {
     }
 
     /**
-     * Owner of this book.
+     * Every book belongs to exactly one user.
      *
-     * The association is temporarily optional while existing books
-     * are migrated. It will become mandatory once authentication
-     * assigns every book to a user.
+     * The database also enforces this relationship with
+     * a NOT NULL foreign key.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public User getUser() {
