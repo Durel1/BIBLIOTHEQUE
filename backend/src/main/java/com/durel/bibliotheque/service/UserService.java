@@ -5,6 +5,9 @@ import com.durel.bibliotheque.dto.RegisterResponse;
 import com.durel.bibliotheque.entity.User;
 import com.durel.bibliotheque.repository.UserRepository;
 import com.durel.bibliotheque.exception.UserAlreadyExistsException;
+import com.durel.bibliotheque.dto.LoginRequest;
+import com.durel.bibliotheque.dto.LoginResponse;
+import com.durel.bibliotheque.exception.InvalidCredentialsException;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,6 +70,36 @@ public class UserService {
                 savedUser.getUsername(),
                 savedUser.getEmail(),
                 savedUser.getCreatedAt()
+        );
+    }
+
+    /**
+    * Authenticates a user with an email and password.
+    */
+    @Transactional(readOnly = true)
+    public LoginResponse login(LoginRequest request) {
+
+        String email = request.email()
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(InvalidCredentialsException::new);
+
+        boolean passwordMatches =
+                passwordEncoder.matches(
+                        request.password(),
+                        user.getPassword()
+                );
+
+        if (!passwordMatches) {
+            throw new InvalidCredentialsException();
+        }
+
+        return new LoginResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
         );
     }
 }
