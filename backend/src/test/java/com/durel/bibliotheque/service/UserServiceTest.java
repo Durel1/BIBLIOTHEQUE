@@ -4,6 +4,7 @@ import com.durel.bibliotheque.dto.RegisterRequest;
 import com.durel.bibliotheque.dto.RegisterResponse;
 import com.durel.bibliotheque.entity.User;
 import com.durel.bibliotheque.repository.UserRepository;
+import com.durel.bibliotheque.exception.UserAlreadyExistsException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,7 +85,7 @@ class UserServiceTest {
                 .willReturn(true);
 
         assertThrows(
-                IllegalArgumentException.class,
+                UserAlreadyExistsException.class,
                 () -> userService.register(request)
         );
     }
@@ -105,7 +106,7 @@ class UserServiceTest {
                 .willReturn(true);
 
         assertThrows(
-                IllegalArgumentException.class,
+                UserAlreadyExistsException.class,
                 () -> userService.register(request)
         );
     }

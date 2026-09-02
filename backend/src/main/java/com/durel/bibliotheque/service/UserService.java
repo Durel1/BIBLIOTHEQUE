@@ -4,6 +4,7 @@ import com.durel.bibliotheque.dto.RegisterRequest;
 import com.durel.bibliotheque.dto.RegisterResponse;
 import com.durel.bibliotheque.entity.User;
 import com.durel.bibliotheque.repository.UserRepository;
+import com.durel.bibliotheque.exception.UserAlreadyExistsException;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,15 +43,12 @@ public class UserService {
                 .toLowerCase(Locale.ROOT);
 
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException(
-                    "Email is already registered"
-            );
+            throw new UserAlreadyExistsException("Email is already registered");
         }
 
         if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException(
-                    "Username is already registered"
-            );
+            throw new UserAlreadyExistsException(
+        "Username is already registered");
         }
 
         String encodedPassword =
