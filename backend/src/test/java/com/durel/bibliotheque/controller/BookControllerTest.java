@@ -6,6 +6,7 @@ import com.durel.bibliotheque.dto.UpdateBookRequest;
 import com.durel.bibliotheque.entity.User;
 import com.durel.bibliotheque.security.JwtAuthenticationFilter;
 import com.durel.bibliotheque.service.BookService;
+import com.durel.bibliotheque.exception.BookNotFoundException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @WebMvcTest(BookController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -179,15 +181,18 @@ class BookControllerTest {
         BookController controller =
                 new BookController(bookService);
 
-        ResponseEntity<BookResponse> response =
-                controller.findById(
-                        999L,
-                        authenticatedUser
+        BookNotFoundException exception =
+                assertThrows(
+                        BookNotFoundException.class,
+                        () -> controller.findById(
+                                999L,
+                                authenticatedUser
+                        )
                 );
 
         assertEquals(
-                404,
-                response.getStatusCode().value()
+                "Book not found: 999",
+                exception.getMessage()
         );
 
         verify(bookService)
@@ -195,7 +200,7 @@ class BookControllerTest {
                         999L,
                         1L
                 );
-    }
+        }
 
     @Test
     void shouldCreateBookForAuthenticatedUser() {
@@ -420,16 +425,19 @@ class BookControllerTest {
         BookController controller =
                 new BookController(bookService);
 
-        ResponseEntity<BookResponse> response =
-                controller.update(
-                        999L,
-                        request,
-                        authenticatedUser
+        BookNotFoundException exception =
+                assertThrows(
+                        BookNotFoundException.class,
+                        () -> controller.update(
+                                999L,
+                                request,
+                                authenticatedUser
+                        )
                 );
 
         assertEquals(
-                404,
-                response.getStatusCode().value()
+                "Book not found: 999",
+                exception.getMessage()
         );
 
         verify(bookService)
@@ -438,7 +446,7 @@ class BookControllerTest {
                         1L,
                         request
                 );
-    }
+        }
 
     @Test
     void shouldDeleteBookForAuthenticatedUser() {
@@ -484,15 +492,18 @@ class BookControllerTest {
         BookController controller =
                 new BookController(bookService);
 
-        ResponseEntity<Void> response =
-                controller.delete(
-                        999L,
-                        authenticatedUser
+        BookNotFoundException exception =
+                assertThrows(
+                        BookNotFoundException.class,
+                        () -> controller.delete(
+                                999L,
+                                authenticatedUser
+                        )
                 );
 
         assertEquals(
-                404,
-                response.getStatusCode().value()
+                "Book not found: 999",
+                exception.getMessage()
         );
 
         verify(bookService)
@@ -500,7 +511,7 @@ class BookControllerTest {
                         999L,
                         1L
                 );
-    }
+        }
 
     /**
      * Creates a reusable BookResponse for controller tests.
