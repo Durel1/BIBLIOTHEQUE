@@ -2,6 +2,7 @@ package com.durel.bibliotheque.config;
 
 import com.durel.bibliotheque.security.JwtAuthenticationFilter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,16 +29,20 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final String allowedOrigin;
+
     public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            @Value("${app.cors.allowed-origin}") String allowedOrigin) {
 
         this.jwtAuthenticationFilter =
                 jwtAuthenticationFilter;
+
+        this.allowedOrigin =
+                allowedOrigin;
     }
 
-    /**
-     * Configures Spring Security.
-     */
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -46,8 +51,7 @@ public class SecurityConfig {
 
         http
                 /*
-                 * Enables CORS so that the frontend running
-                 * on another origin can call the API.
+                 * Enables the CORS policy declared below.
                  */
                 .cors(cors ->
                         cors.configurationSource(
@@ -56,17 +60,13 @@ public class SecurityConfig {
                 )
 
                 /*
-                 * The API uses JWT authentication rather than
-                 * cookie-based sessions.
+                 * The API uses stateless JWT authentication,
+                 * not cookie-based sessions.
                  */
                 .csrf(csrf ->
                         csrf.disable()
                 )
 
-                /*
-                 * Spring Security must not create HTTP sessions.
-                 * Each authenticated request contains its JWT.
-                 */
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -74,8 +74,8 @@ public class SecurityConfig {
                 )
 
                 /*
-                 * Requests requiring authentication return
-                 * HTTP 401 when no valid authentication exists.
+                 * Protected endpoints return HTTP 401 when
+                 * authentication is missing or invalid.
                  */
                 .exceptionHandling(exceptions ->
                         exceptions.authenticationEntryPoint(
@@ -86,8 +86,7 @@ public class SecurityConfig {
                 )
 
                 /*
-                 * Registration and login remain public.
-                 * Every other endpoint requires authentication.
+                 * Registration and login are public.
                  */
                 .authorizeHttpRequests(authorize ->
                         authorize
@@ -102,8 +101,8 @@ public class SecurityConfig {
                 )
 
                 /*
-                 * The JWT filter runs before Spring Security's
-                 * username/password authentication filter.
+                 * Our JWT filter authenticates requests
+                 * before Spring's standard authentication filter.
                  */
                 .addFilterBefore(
                         jwtAuthenticationFilter,
@@ -113,9 +112,15 @@ public class SecurityConfig {
         return http.build();
     }
 
+
     /**
-     * Defines which frontend is allowed to communicate
-     * with the backend API.
+     * Defines which frontend origin may call the API.
+     *
+     * Local:
+     * http://localhost:5500
+     *
+     * Production:
+     * https://....vercel.app
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -123,21 +128,12 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        /*
-         * Local frontend development server.
-         *
-         * Later, the deployed frontend URL will also
-         * be configured here.
-         */
         configuration.setAllowedOrigins(
                 List.of(
-                        "http://localhost:5500"
+                        allowedOrigin
                 )
         );
 
-        /*
-         * HTTP methods used by our REST API.
-         */
         configuration.setAllowedMethods(
                 List.of(
                         "GET",
@@ -148,13 +144,6 @@ public class SecurityConfig {
                 )
         );
 
-        /*
-         * Content-Type:
-         * required when sending JSON.
-         *
-         * Authorization:
-         * required when sending the JWT.
-         */
         configuration.setAllowedHeaders(
                 List.of(
                         "Content-Type",
@@ -165,9 +154,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        /*
-         * Apply this CORS configuration to all API paths.
-         */
         source.registerCorsConfiguration(
                 "/**",
                 configuration
