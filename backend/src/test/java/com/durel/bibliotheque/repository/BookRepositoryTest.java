@@ -12,7 +12,6 @@ import java.util.List;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 class BookRepositoryTest {
@@ -21,29 +20,53 @@ class BookRepositoryTest {
     private BookRepository bookRepository;
 
     @Test
-    void shouldSaveAndFindBook() {
+        void shouldSaveAndFindBookForUser() {
+
+        User user = new User(
+                "durel",
+                "durel@example.com",
+                "encoded-password"
+        );
+
+        User savedUser =
+                userRepository.save(user);
 
         Book book = new Book(
                 "Clean Code",
                 "Robert C. Martin",
                 2008,
-                "Software Engineering",
-                "A book about writing cleaner code.",
+                "Programming",
+                "A book about clean code.",
                 null
         );
 
-        Book savedBook = bookRepository.save(book);
+        /*
+        * A Book can no longer exist without an owner.
+        */
+        book.setUser(savedUser);
 
-        assertNotNull(savedBook.getId());
+        Book savedBook =
+                bookRepository.save(book);
 
         Optional<Book> result =
-                bookRepository.findById(savedBook.getId());
+                bookRepository.findByIdAndUser_Id(
+                        savedBook.getId(),
+                        savedUser.getId()
+                );
 
         assertTrue(result.isPresent());
-        assertEquals("Clean Code", result.get().getTitle());
-        assertEquals("Robert C. Martin", result.get().getAuthor());
-    }
 
+        assertEquals(
+                "Clean Code",
+                result.get().getTitle()
+        );
+
+        assertEquals(
+                savedUser.getId(),
+                result.get().getUser().getId()
+        );
+        }
+   
     @Autowired
     private UserRepository userRepository;
 
