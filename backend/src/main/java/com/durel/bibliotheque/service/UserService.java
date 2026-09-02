@@ -8,6 +8,7 @@ import com.durel.bibliotheque.exception.UserAlreadyExistsException;
 import com.durel.bibliotheque.dto.LoginRequest;
 import com.durel.bibliotheque.dto.LoginResponse;
 import com.durel.bibliotheque.exception.InvalidCredentialsException;
+import com.durel.bibliotheque.security.JwtService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,16 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final JwtService jwtService;
+    
     public UserService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -96,10 +100,14 @@ public class UserService {
             throw new InvalidCredentialsException();
         }
 
+        String token =
+        jwtService.generateToken(user);
+
         return new LoginResponse(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail()
+                user.getEmail(),
+                token
         );
     }
 }

@@ -116,11 +116,12 @@ class AuthControllerTest {
         void shouldLoginUser() throws Exception {
 
         LoginResponse response =
-                new LoginResponse(
-                        1L,
-                        "durel",
-                        "durel@example.com"
-                );
+        new LoginResponse(
+                1L,
+                "durel",
+                "durel@example.com",
+                "test-jwt-token"
+        );
 
         given(userService.login(any()))
                 .willReturn(response);
@@ -145,6 +146,10 @@ class AuthControllerTest {
                 .andExpect(
                         jsonPath("$.password")
                                 .doesNotExist()
+                )
+                .andExpect(
+                        jsonPath("$.token")
+                                .value("test-jwt-token")
                 );
         }
 
