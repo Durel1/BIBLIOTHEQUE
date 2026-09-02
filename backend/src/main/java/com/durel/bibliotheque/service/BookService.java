@@ -1,22 +1,23 @@
 package com.durel.bibliotheque.service;
 
-import com.durel.bibliotheque.dto.BookResponse;
-import com.durel.bibliotheque.dto.CreateBookRequest;
-import com.durel.bibliotheque.dto.UpdateBookRequest;
-import com.durel.bibliotheque.entity.Book;
-import com.durel.bibliotheque.repository.BookRepository;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import com.durel.bibliotheque.dto.BookResponse;
+import com.durel.bibliotheque.dto.CreateBookRequest;
+import com.durel.bibliotheque.dto.UpdateBookRequest;
+import com.durel.bibliotheque.entity.Book;
+import com.durel.bibliotheque.entity.User;
+import com.durel.bibliotheque.repository.BookRepository;
 
 /**
  * Contains the business logic related to books.
  *
- * Book data is persisted through BookRepository instead of
- * being stored directly in memory by the service.
+ * Every read, update and delete operation is scoped to a user
+ * so that one authenticated user cannot access another user's books.
  */
 @Service
 @Transactional
@@ -32,101 +33,154 @@ public class BookService {
     }
 
     /**
-     * Returns all books stored in the database.
+     * Returns only books belonging to the authenticated user.
      */
     @Transactional(readOnly = true)
-    public List<BookResponse> findAll() {
+    public List<BookResponse> findAllByUserId(Long userId) {
 
-        return bookRepository.findAll()
+        return bookRepository
+                .findAllByUser_Id(userId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     /**
-     * Finds one book by its identifier.
+     * Returns a book only when it belongs to the authenticated user.
+     *
+     * If the book does not exist or belongs to another user,
+     * an empty Optional is returned.
      */
     @Transactional(readOnly = true)
-    public Optional<BookResponse> findById(Long id) {
+    public Optional<BookResponse> findByIdForUser(
+            Long bookId,
+            Long userId) {
 
-        return bookRepository.findById(id)
+        return bookRepository
+                .findByIdAndUser_Id(
+                        bookId,
+                        userId
+                )
                 .map(this::toResponse);
     }
 
     /**
-     * Creates and persists a new book.
+     * Creates a book owned by the authenticated user.
+     *
+     * The owner comes from the server-side authentication context,
+     * never from client input.
      */
-    public BookResponse create(CreateBookRequest request) {
+    public BookResponse create(
+            CreateBookRequest request,
+            User authenticatedUser) {
 
         Book book = new Book(
-                request.title().trim(),
-                request.author().trim(),
+                request.title(),
+                request.author(),
                 request.publishedYear(),
-                normalizeOptionalText(request.genre()),
-                normalizeOptionalText(request.description()),
-                normalizeOptionalText(request.coverUrl())
+                request.genre(),
+                request.description(),
+                request.coverUrl()
         );
 
-        Book savedBook = bookRepository.save(book);
+        /*
+         * Ownership is assigned by the backend.
+         * The client cannot choose another user as the owner.
+         */
+        book.setUser(authenticatedUser);
+
+        Book savedBook =
+                bookRepository.save(book);
 
         return toResponse(savedBook);
     }
 
     /**
-     * Updates an existing book when it exists.
+     * Updates a book only when it belongs to the authenticated user.
+     *
+     * If the book does not exist or belongs to another user,
+     * an empty Optional is returned.
      */
-    public Optional<BookResponse> update(
-            Long id,
+    public Optional<BookResponse> updateForUser(
+            Long bookId,
+            Long userId,
             UpdateBookRequest request) {
 
-        Optional<Book> existingBook =
-                bookRepository.findById(id);
+        return bookRepository
+                .findByIdAndUser_Id(
+                        bookId,
+                        userId
+                )
+                .map(book -> {
 
-        if (existingBook.isEmpty()) {
-            return Optional.empty();
-        }
+                    /*
+                     * Only book data is updated.
+                     * Ownership must never be changed here.
+                     */
+                    book.setTitle(
+                            request.title().trim()
+                    );
 
-        Book book = existingBook.get();
+                    book.setAuthor(
+                            request.author().trim()
+                    );
 
-        book.setTitle(request.title().trim());
-        book.setAuthor(request.author().trim());
-        book.setPublishedYear(request.publishedYear());
-        book.setGenre(normalizeOptionalText(request.genre()));
-        book.setDescription(
-                normalizeOptionalText(request.description())
-        );
-        book.setCoverUrl(
-                normalizeOptionalText(request.coverUrl())
-        );
+                    book.setPublishedYear(
+                            request.publishedYear()
+                    );
 
-        /*
-         * saveAndFlush forces Hibernate to synchronize the update
-         * before building the response. This is useful because
-         * updatedAt is changed by the @PreUpdate callback.
-         */
-        Book updatedBook =
-                bookRepository.saveAndFlush(book);
+                    book.setGenre(
+                            normalizeOptionalText(
+                                    request.genre()
+                            )
+                    );
 
-        return Optional.of(toResponse(updatedBook));
+                    book.setDescription(
+                            normalizeOptionalText(
+                                    request.description()
+                            )
+                    );
+
+                    book.setCoverUrl(
+                            normalizeOptionalText(
+                                    request.coverUrl()
+                            )
+                    );
+
+                    /*
+                     * saveAndFlush synchronizes the update immediately.
+                     * This ensures that @PreUpdate updates updatedAt
+                     * before the response DTO is created.
+                     */
+                    Book updatedBook =
+                            bookRepository.saveAndFlush(book);
+
+                    return toResponse(updatedBook);
+                });
     }
 
     /**
-     * Deletes a book when it exists.
+     * Deletes a book only when it belongs to the authenticated user.
      *
-     * @return true when a book was deleted, false otherwise
+     * Returns false when the book does not exist
+     * or belongs to another user.
      */
-    public boolean delete(Long id) {
+    public boolean deleteForUser(
+            Long bookId,
+            Long userId) {
 
-        Optional<Book> existingBook =
-                bookRepository.findById(id);
+        return bookRepository
+                .findByIdAndUser_Id(
+                        bookId,
+                        userId
+                )
+                .map(book -> {
 
-        if (existingBook.isEmpty()) {
-            return false;
-        }
+                    bookRepository.delete(book);
 
-        bookRepository.delete(existingBook.get());
-
-        return true;
+                    return true;
+                })
+                .orElse(false);
     }
 
     /**
@@ -148,8 +202,7 @@ public class BookService {
     }
 
     /**
-     * Converts an optional blank string into null and trims
-     * meaningful values.
+     * Converts blank optional text to null and trims meaningful values.
      */
     private String normalizeOptionalText(String value) {
 

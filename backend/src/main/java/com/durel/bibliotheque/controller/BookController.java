@@ -3,11 +3,13 @@ package com.durel.bibliotheque.controller;
 import com.durel.bibliotheque.dto.BookResponse;
 import com.durel.bibliotheque.dto.CreateBookRequest;
 import com.durel.bibliotheque.dto.UpdateBookRequest;
+import com.durel.bibliotheque.entity.User;
 import com.durel.bibliotheque.service.BookService;
 
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +25,7 @@ import java.util.List;
 /**
  * Exposes REST endpoints used to manage books.
  *
- * The controller is responsible for HTTP concerns only.
+ * The controller handles HTTP concerns only.
  * Business logic is delegated to BookService.
  */
 @RestController
@@ -32,40 +34,63 @@ public class BookController {
 
     private final BookService bookService;
 
-    /**
-     * Spring injects the BookService dependency through the constructor.
-     */
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
     /**
-     * Returns all books currently stored.
+     * Returns only books belonging to the authenticated user.
+     *
+     * The User comes from Spring Security's SecurityContext,
+     * not from data sent by the client.
      */
     @GetMapping
-    public List<BookResponse> findAll() {
-        return bookService.findAll();
+    public List<BookResponse> findAll(
+            @AuthenticationPrincipal User user) {
+
+        return bookService.findAllByUserId(
+                user.getId()
+        );
     }
 
     /**
-     * Returns one book when it exists, otherwise HTTP 404.
+     * Returns a book only when it belongs to the authenticated user.
+     *
+     * A missing book and a book owned by another user both
+     * result in HTTP 404.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<BookResponse> findById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
 
-        return bookService.findById(id)
+        return bookService
+                .findByIdForUser(
+                        id,
+                        user.getId()
+                )
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() ->
+                        ResponseEntity.notFound().build()
+                );
     }
 
     /**
-     * Creates a new book and returns HTTP 201 Created.
+     * Creates a new book for the authenticated user.
+     *
+     * The owner is obtained from Spring Security,
+     * never from the request body.
      */
     @PostMapping
     public ResponseEntity<BookResponse> create(
-            @Valid @RequestBody CreateBookRequest request) {
+            @Valid @RequestBody CreateBookRequest request,
+            @AuthenticationPrincipal User user) {
 
-        BookResponse createdBook = bookService.create(request);
+        BookResponse createdBook =
+                bookService.create(
+                        request,
+                        user
+                );
 
         URI location = URI.create(
                 "/api/books/" + createdBook.id()
@@ -76,26 +101,45 @@ public class BookController {
                 .body(createdBook);
     }
 
-    /**
-     * Updates an existing book.
+   /**
+     * Updates a book only when it belongs to the authenticated user.
+     *
+     * A missing book and a book owned by another user both
+     * result in HTTP 404.
      */
     @PutMapping("/{id}")
     public ResponseEntity<BookResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateBookRequest request) {
+            @Valid @RequestBody UpdateBookRequest request,
+            @AuthenticationPrincipal User user) {
 
-        return bookService.update(id, request)
+        return bookService
+                .updateForUser(
+                        id,
+                        user.getId(),
+                        request
+                )
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() ->
+                        ResponseEntity.notFound().build()
+                );
     }
 
     /**
-     * Deletes an existing book.
+     * Deletes a book only when it belongs to the authenticated user.
+     *
+     * A missing book and a book owned by another user both
+     * result in HTTP 404.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
 
-        if (!bookService.delete(id)) {
+        if (!bookService.deleteForUser(
+                id,
+                user.getId()
+        )) {
             return ResponseEntity.notFound().build();
         }
 
