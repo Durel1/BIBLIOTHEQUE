@@ -3,6 +3,8 @@ package com.durel.bibliotheque.controller;
 import com.durel.bibliotheque.dto.RegisterResponse;
 import com.durel.bibliotheque.exception.UserAlreadyExistsException;
 import com.durel.bibliotheque.service.UserService;
+import com.durel.bibliotheque.dto.LoginResponse;
+import com.durel.bibliotheque.exception.InvalidCredentialsException;
 
 import org.junit.jupiter.api.Test;
 
@@ -109,4 +111,79 @@ class AuthControllerTest {
                 )
                 .andExpect(status().isConflict());
     }
+
+        @Test
+        void shouldLoginUser() throws Exception {
+
+        LoginResponse response =
+                new LoginResponse(
+                        1L,
+                        "durel",
+                        "durel@example.com"
+                );
+
+        given(userService.login(any()))
+                .willReturn(response);
+
+        mockMvc.perform(
+                        post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                        "email": "durel@example.com",
+                                        "password": "Bonjour123!"
+                                        }
+                                        """)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.username").value("durel"))
+                .andExpect(
+                        jsonPath("$.email")
+                                .value("durel@example.com")
+                )
+                .andExpect(
+                        jsonPath("$.password")
+                                .doesNotExist()
+                );
+        }
+
+        @Test
+        void shouldReturnUnauthorizedForInvalidCredentials()
+                throws Exception {
+
+        given(userService.login(any()))
+                .willThrow(
+                        new InvalidCredentialsException()
+                );
+
+        mockMvc.perform(
+                        post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                        "email": "durel@example.com",
+                                        "password": "WrongPassword"
+                                        }
+                                        """)
+                )
+                .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void shouldRejectInvalidLoginRequest()
+                throws Exception {
+
+        mockMvc.perform(
+                        post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                        "email": "not-an-email",
+                                        "password": ""
+                                        }
+                                        """)
+                )
+                .andExpect(status().isBadRequest());
+        }
 }

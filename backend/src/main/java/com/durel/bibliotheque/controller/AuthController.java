@@ -4,6 +4,9 @@ import com.durel.bibliotheque.dto.RegisterRequest;
 import com.durel.bibliotheque.dto.RegisterResponse;
 import com.durel.bibliotheque.exception.UserAlreadyExistsException;
 import com.durel.bibliotheque.service.UserService;
+import com.durel.bibliotheque.dto.LoginRequest;
+import com.durel.bibliotheque.dto.LoginResponse;
+import com.durel.bibliotheque.exception.InvalidCredentialsException;
 
 import jakarta.validation.Valid;
 
@@ -47,6 +50,28 @@ public class AuthController {
 
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
+                    .build();
+        }
+    }
+
+    /**
+    * Authenticates an existing user.
+    */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        try {
+
+            LoginResponse response =
+                    userService.login(request);
+
+            return ResponseEntity.ok(response);
+
+        } catch (InvalidCredentialsException exception) {
+
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
                     .build();
         }
     }

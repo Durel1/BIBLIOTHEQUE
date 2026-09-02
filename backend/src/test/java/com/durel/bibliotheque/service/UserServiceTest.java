@@ -5,6 +5,9 @@ import com.durel.bibliotheque.dto.RegisterResponse;
 import com.durel.bibliotheque.entity.User;
 import com.durel.bibliotheque.repository.UserRepository;
 import com.durel.bibliotheque.exception.UserAlreadyExistsException;
+import com.durel.bibliotheque.dto.LoginRequest;
+import com.durel.bibliotheque.dto.LoginResponse;
+import com.durel.bibliotheque.exception.InvalidCredentialsException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -110,4 +115,97 @@ class UserServiceTest {
                 () -> userService.register(request)
         );
     }
+
+        @Test
+        void shouldLoginWithValidCredentials() {
+
+        LoginRequest request = new LoginRequest(
+                "  Durel@Example.com  ",
+                "Bonjour123!"
+        );
+
+        User user = new User(
+                "durel",
+                "durel@example.com",
+                "encoded-password"
+        );
+
+        given(userRepository.findByEmail("durel@example.com"))
+                .willReturn(Optional.of(user));
+
+        given(
+                passwordEncoder.matches(
+                        "Bonjour123!",
+                        "encoded-password"
+                )
+        ).willReturn(true);
+
+        LoginResponse response =
+                userService.login(request);
+
+        assertEquals("durel", response.username());
+        assertEquals(
+                "durel@example.com",
+                response.email()
+        );
+
+        verify(passwordEncoder)
+                .matches(
+                        "Bonjour123!",
+                        "encoded-password"
+                );
+        }
+
+        @Test
+        void shouldRejectUnknownEmail() {
+
+        LoginRequest request = new LoginRequest(
+                "unknown@example.com",
+                "Bonjour123!"
+        );
+
+        given(
+                userRepository.findByEmail(
+                        "unknown@example.com"
+                )
+        ).willReturn(Optional.empty());
+
+        assertThrows(
+                InvalidCredentialsException.class,
+                () -> userService.login(request)
+        );
+        }
+
+        @Test
+        void shouldRejectInvalidPassword() {
+
+        LoginRequest request = new LoginRequest(
+                "durel@example.com",
+                "WrongPassword"
+        );
+
+        User user = new User(
+                "durel",
+                "durel@example.com",
+                "encoded-password"
+        );
+
+        given(
+                userRepository.findByEmail(
+                        "durel@example.com"
+                )
+        ).willReturn(Optional.of(user));
+
+        given(
+                passwordEncoder.matches(
+                        "WrongPassword",
+                        "encoded-password"
+                )
+        ).willReturn(false);
+
+        assertThrows(
+                InvalidCredentialsException.class,
+                () -> userService.login(request)
+        );
+        }
 }
