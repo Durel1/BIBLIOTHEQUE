@@ -1,6 +1,5 @@
 const API_BASE_URL =
-        "http://localhost:8080";
-
+        "https://bibliotheque-api-4oxh.onrender.com";
 
 export async function apiRequest(
         path,
