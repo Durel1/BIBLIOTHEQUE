@@ -1,5 +1,11 @@
+/*
+ * Use the local backend during development
+ * and the Render API in production.
+ */
 const API_BASE_URL =
-        "https://bibliotheque-api-4oxh.onrender.com";
+        window.location.hostname === "localhost"
+                ? "http://localhost:8080"
+                : "https://bibliotheque-api-4oxh.onrender.com";
 
 export async function apiRequest(
         path,
